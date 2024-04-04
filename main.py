@@ -1,22 +1,33 @@
-# Створіть метаклас, що перевіряє наявність певних
-# атрибутів у всіх класах, які використовують цей
-# метаклас.
+# Реалізуйте метаклас, що забороняє спадкування від
+# певних класів чи змінює порядок спадкування.
 
 
 class MetaClass(type):
-    attributes = ["name"]
-    def __new__(cls, name, bases, dct):
+    forbidden_classes = ["Forbidden"]
 
-        for attribute in cls.attributes:
-            if attribute not in dct:
-                raise AttributeError(f'There is no atribute {attribute} in class {name}')
+    def __new__(cls, name, bases, dct):
+        for base in bases:
+            if base.__name__ in cls.forbidden_classes:
+                raise TypeError(f"Inheritance from {base.__name__} is forbidden.")
         return super().__new__(cls, name, bases, dct)
 
-class MyClass(metaclass=MetaClass):
-    name = "John"
-    age = 23
-    def greet(self):
-        print(f"Hello world, its {self.name}. I'm {self.age} years old.")
 
-object = MyClass()
-object.greet()
+# class Allowed(metaclass=ForbiddenInheritanceMeta):
+    ...
+
+class Forbidden(metaclass=MetaClass):
+    ...
+
+class NewClass(Forbidden):
+    ...
+
+# class NewClass(Allowed):
+#     ...
+
+
+
+
+
+
+
+
