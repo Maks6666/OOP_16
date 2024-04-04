@@ -1,21 +1,22 @@
-# Задайте метаклас, що автоматично додає
-# додатковий функціонал до всіх класів, що його
-# використовують.
+# Створіть метаклас, що перевіряє наявність певних
+# атрибутів у всіх класах, які використовують цей
+# метаклас.
 
 
-class MetalClass(type):
+class MetaClass(type):
+    attributes = ["name"]
     def __new__(cls, name, bases, dct):
 
-        def greet(self):
-            print(f"New method created!")
-
-        dct['greet'] = greet
-        print(f'{dct=}')
+        for attribute in cls.attributes:
+            if attribute not in dct:
+                raise AttributeError(f'There is no atribute {attribute} in class {name}')
         return super().__new__(cls, name, bases, dct)
 
-class MyClass(metaclass=MetalClass):
-    def __init__(self, name):
-        self.name = name
+class MyClass(metaclass=MetaClass):
+    name = "John"
+    age = 23
+    def greet(self):
+        print(f"Hello world, its {self.name}. I'm {self.age} years old.")
 
-object = MyClass("Test")
+object = MyClass()
 object.greet()
